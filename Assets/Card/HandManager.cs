@@ -1,4 +1,6 @@
 using DG.Tweening;
+using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
@@ -8,7 +10,7 @@ public class HandManager : MonoBehaviour
 {
     [SerializeField] private int CurrentSelectedCard = 1;
     [Space (10)]
-    [SerializeField] private int maxHandSize;
+    public int maxHandSize;
     [SerializeField] private GameObject cardPrefab;
     [SerializeField] private SplineContainer splineContainer;
     [SerializeField] private Transform DeckParent;
@@ -21,6 +23,8 @@ public class HandManager : MonoBehaviour
     public List<GameObject> handCard = new();
     public List<GameObject> DiscardedCard = new();
     private float selectedTime = 3f;
+
+    public event Action<AbilityCard> UsedCard;
 
     float scrollIdleTimer = 0f;
 
@@ -44,30 +48,26 @@ public class HandManager : MonoBehaviour
         //UseCard();
     }
 
-    public void Drawcard()
+    public void Drawcard(int amount)
     {
-        int cardleft = handCard.Count;
-        for (int i =  0; i < cardleft; i++)
-        {
-            DiscardedCard.Add(handCard[0]);
+        //for (int i =  0; i < handCard.Count; i++)
+        //{
+        //    DiscardedCard.Add(handCard[0]);
 
-            discardCard(handCard[0]);
-            //handCard[0].SetActive(false);
+        //    discardCard(handCard[0]);
 
-            handCard.RemoveAt(0);
-        }
+        //    handCard.RemoveAt(0);
+        //}
         
-        for (int i = 0; i < maxHandSize; i++)
+        for (int i = 0; i < amount; i++)
         {
             if (Deck.Count > 0)
             {
-                int rand = UnityEngine.Random.Range(0, Deck.Count - 1);
-                GameObject card = Deck[rand];
-
-                //GameObject _obj = Instantiate(card, spawnPoint.position, spawnPoint.rotation, handTransform);
+                //int rand = UnityEngine.Random.Range(0, Deck.Count - 1);
+                GameObject card = Deck[0];
 
                 handCard.Add(card);
-                Deck.RemoveAt(rand);
+                Deck.RemoveAt(0);
             }
             else break;
         }
@@ -76,30 +76,44 @@ public class HandManager : MonoBehaviour
         updateHandCardPos();
     }
 
+    public void ClearHand()
+    {
+        int handsize = handCard.Count;
+        for (int i = 0; i < handsize; i++)
+        {
+            DiscardedCard.Add(handCard[0]);
+
+            discardCard(handCard[0]);
+
+            handCard.RemoveAt(0);
+        }
+    }
+
     public void ResetCard()
     {
         Deck.AddRange(handCard);
         Deck.AddRange(DiscardedCard);
 
+        shuffleDeck();
+
         foreach (GameObject card in handCard)
         {
-            putBackToDeck(card);
+            PutBackToDeck(card);
         }
 
         foreach (GameObject card in DiscardedCard)
         {
-            putBackToDeck(card);
+            PutBackToDeck(card);
         }
 
         handCard.Clear();
         DiscardedCard.Clear();
     }
 
-    private void putBackToDeck(GameObject card)
+    public void PutBackToDeck(GameObject card)
     {
         float jumpPow = UnityEngine.Random.Range(300, -300);
         card.transform.DOJump(DeckParent.position, jumpPow, 1, 0.25f);
-        //card.transform.DOMove(DeckParent.position, 0.25f);
         card.transform.DORotate(Vector3.zero, 0.25f);
     }
 
@@ -108,12 +122,13 @@ public class HandManager : MonoBehaviour
         if (/*Input.GetMouseButtonDown(0) &&*/ isSelecting && (CurrentSelectedCard >= 0 && CurrentSelectedCard < handCard.Count))
         {
             PlayerManagerScript playerManager = PlayerManagerScript.Instance;
-            handCard[CurrentSelectedCard].GetComponent<AbilityCard>().UseAbility(playerManager);
             //discard Card
-            GameObject usedCard = handCard[CurrentSelectedCard];
-            DiscardedCard.Add(usedCard);
+            AbilityCard usedCard = handCard[CurrentSelectedCard].GetComponent<AbilityCard>();
+            usedCard.UseAbility(playerManager);
+            DiscardedCard.Add(usedCard.gameObject);
             handCard.RemoveAt(CurrentSelectedCard);
-            discardCard(usedCard);
+            discardCard(usedCard.gameObject);
+            UsedCard.Invoke(usedCard);
             scrollIdleTimer = selectedTime;
         }
     }
@@ -187,13 +202,34 @@ public class HandManager : MonoBehaviour
         }
     }
 
-    private void discardCard(GameObject card)
+    public void discardCard(GameObject card)
     {
-        //card.transform.DOMove(discardPoint.position, 0.25f);
         float jumpPow = UnityEngine.Random.Range(200, -200);
         card.transform.DOJump(discardPoint.position, jumpPow, 1, 0.25f);
 
         float rand = UnityEngine.Random.Range(0, 360);
         card.transform.DORotate(new Vector3(0, 0, rand), 0.25f);
+    }
+
+    [ContextMenu("Shuffle deck")]
+    public void shuffleDeck()
+    {
+        //int listCount = Deck.Count;
+        //for (int i = listCount; i > 0; i--)
+        //{
+        //    int rand = UnityEngine.Random.Range(0, listCount + 1);
+        //    var temp = Deck[rand];
+        //    Deck[rand] = Deck[i];
+        //    Deck[i] = temp;
+        //}
+        int deckCount = Deck.Count;
+        while (deckCount > 1)
+        {
+            deckCount--;
+            int rand = UnityEngine.Random.Range(0, deckCount + 1);
+            GameObject temp = Deck[rand];
+            Deck[rand] = Deck[deckCount];
+            Deck[deckCount] = temp;
+        }
     }
 }

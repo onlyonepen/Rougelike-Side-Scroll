@@ -123,12 +123,6 @@ public class RangeEnemyStateManager : EnemyClass
         RaycastHit2D temp = Physics2D.Raycast(transform.position + castOffset, Vector2.right, ReusableData._boxCollider.bounds.extents.x * 0.2f, groundLayer);
         return temp;
     }
-    public int FacingDir()
-    {
-        int i = 1;
-        if (!ReusableData.IsFacingRight) i = -1;
-        return i;
-    }
     public void Flip()
     {
         Vector3 _localScale = transform.localScale;

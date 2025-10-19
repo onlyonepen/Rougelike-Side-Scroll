@@ -58,6 +58,13 @@ public abstract class EnemyClass : MonoBehaviour, IDamagable
         return Physics2D.BoxCast(BoxcastOrigin, BoxcastSize, 0, Vector2.zero, Mathf.Infinity, groundLayer);
     }
 
+    public int FacingDir()
+    {
+        int i = 1;
+        if (!ReusableData.IsFacingRight) i = -1;
+        return i;
+    }
+
     public virtual void FreezeEnemy(float freezeTime) { }
 }
 

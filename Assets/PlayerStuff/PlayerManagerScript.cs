@@ -1,5 +1,5 @@
+using System;
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -31,6 +31,8 @@ public class PlayerManagerScript : MonoBehaviour
     public float MaxHealth = 100f;
     public float CurrentHealth;
     public Slider HpSlider;
+
+    //Event stuff
 
     private PlayerState previousState;
     private bool stateLocked = false;
@@ -64,7 +66,8 @@ public class PlayerManagerScript : MonoBehaviour
 
     private void Start()
     {
-        HandManager.Drawcard();
+        HandManager.shuffleDeck();
+        HandManager.Drawcard(HandManager.maxHandSize);
         CurrentHealth = MaxHealth;
     }
 
@@ -207,7 +210,8 @@ public class PlayerManagerScript : MonoBehaviour
         yield return new WaitForSeconds(drawingCardDur);
 
         MovementScript.canMove = true;
-        HandManager.Drawcard();
+        HandManager.ClearHand();
+        HandManager.Drawcard(HandManager.maxHandSize);
 
         stateLocked = false;
         isDrawing = false;
