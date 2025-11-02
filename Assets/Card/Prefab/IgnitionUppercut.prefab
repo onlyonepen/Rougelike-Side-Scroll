@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2965441560993458343}
   - component: {fileID: 8094880402971934409}
   m_Layer: 6
-  m_Name: MeleeCritOnFire
+  m_Name: IgnitionUppercut
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -89,7 +89,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Range: 2
-  Damage: 4
+  Damage: 45
   CritMult: 2
   StaggeringTime: 1
   pushUpForce: 5

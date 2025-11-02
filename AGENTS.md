@@ -2,7 +2,7 @@
 - Project name: Rougelike-Side-Scroll
 - Unity version: Unity 6000.0.60f1
 - Active game object:
-  - Name: Reserve
+  - Name: DarkenOverlay
   - Tag: Untagged
-  - Layer: Card
+  - Layer: UI
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->

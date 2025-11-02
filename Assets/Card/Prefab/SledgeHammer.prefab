@@ -89,7 +89,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SledgeHammer
   Range: 2
-  Damage: 6
+  Damage: 60
   CritMult: 2
   StaggeringTime: 0.5
   enemyLayer:

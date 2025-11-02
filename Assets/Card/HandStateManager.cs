@@ -1,17 +1,14 @@
 using DG.Tweening;
-using NUnit.Framework;
-using System;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Splines;
 
-public class HandManager : MonoBehaviour
+public class HandStateManager : MonoBehaviour
 {
-    [SerializeField] private int CurrentSelectedCard = 1;
-    [Space (10)]
+    public int CurrentSelectedCard = 1;
+    [Space(10)]
     public int maxHandSize;
-    [SerializeField] private GameObject cardPrefab;
     [SerializeField] private SplineContainer splineContainer;
     [SerializeField] private Transform DeckParent;
     [SerializeField] private Transform discardPoint;
@@ -19,55 +16,68 @@ public class HandManager : MonoBehaviour
     [SerializeField] private float3 offset;
 
     public bool isSelecting = false;
-    public List<GameObject> Deck = new();
-    public List<GameObject> handCard = new();
-    public List<GameObject> DiscardedCard = new();
+    public List<GameObject> DeckPile = new();
+    public List<GameObject> handpile = new();
+    public List<GameObject> DiscardedPile = new();
     private float selectedTime = 3f;
 
-    public event Action<AbilityCard> UsedCard;
+    public HandState CurrentState;
+
+    public DefaultHandState DefaultHandState = new DefaultHandState();
+    public ReserveState ReserveState = new ReserveState();
 
     float scrollIdleTimer = 0f;
 
     private void Awake()
     {
-        for(int i = 0; i < DeckParent.childCount; i++)
+        for (int i = 0; i < DeckParent.childCount; i++)
         {
-            Deck.Add(DeckParent.GetChild(i).gameObject);
+            DeckPile.Add(DeckParent.GetChild(i).gameObject);
         }
         DOTween.SetTweensCapacity(1250, 50);
     }
 
-    private void Update()
+    private void Start()
     {
-        //if (Input.GetKeyDown(KeyCode.R)) Drawcard();
+        CurrentState = DefaultHandState;
+        CurrentState.OnStateEnter(this);
+    }
 
-        if (Input.GetKeyDown(KeyCode.G)) ResetCard();
+    // Update is called once per frame
+    void Update()
+    {
+        DefaultHandState.OnStateUpdate(this);
+    }
 
-        cardScrollSelection();
+    public void ChangeState(HandState state)
+    {
+        CurrentState.OnStateExit(this);
+        CurrentState = state;
+        Debug.Log("Change hand state to " + state);
+        CurrentState.OnStateEnter(this);
+    }
 
-        //UseCard();
+    public void ChooseCard()
+    {
+        CurrentState.OnSelectCard(this, handpile[CurrentSelectedCard].GetComponent<AbilityCard>());
+    }
+
+    public void ResetSelectionTimer()
+    {
+        scrollIdleTimer = selectedTime;
     }
 
     public void Drawcard(int amount)
     {
-        //for (int i =  0; i < handCard.Count; i++)
-        //{
-        //    DiscardedCard.Add(handCard[0]);
-
-        //    discardCard(handCard[0]);
-
-        //    handCard.RemoveAt(0);
-        //}
-        
         for (int i = 0; i < amount; i++)
         {
-            if (Deck.Count > 0)
+            if (DeckPile.Count > 0)
             {
                 //int rand = UnityEngine.Random.Range(0, Deck.Count - 1);
-                GameObject card = Deck[0];
+                GameObject card = DeckPile[0];
 
-                handCard.Add(card);
-                Deck.RemoveAt(0);
+                handpile.Add(card);
+                DeckPile.RemoveAt(0);
             }
             else break;
         }
@@ -78,64 +88,45 @@ public class HandManager : MonoBehaviour
 
     public void ClearHand()
     {
-        int handsize = handCard.Count;
+        int handsize = handpile.Count;
         for (int i = 0; i < handsize; i++)
         {
-            DiscardedCard.Add(handCard[0]);
-
-            discardCard(handCard[0]);
-
-            handCard.RemoveAt(0);
+            discardCard(handpile[0]);
         }
     }
 
     public void ResetCard()
     {
-        Deck.AddRange(handCard);
-        Deck.AddRange(DiscardedCard);
+        DeckPile.AddRange(handpile);
+        DeckPile.AddRange(DiscardedPile);
+
+
+        foreach (GameObject card in handpile)
+        {
+            PutBackToDeckAnim(card);
+        }
+
+        foreach (GameObject card in DiscardedPile)
+        {
+            PutBackToDeckAnim(card);
+        }
 
         shuffleDeck();
 
-        foreach (GameObject card in handCard)
-        {
-            PutBackToDeck(card);
-        }
-
-        foreach (GameObject card in DiscardedCard)
-        {
-            PutBackToDeck(card);
-        }
-
-        handCard.Clear();
-        DiscardedCard.Clear();
+        handpile.Clear();
+        DiscardedPile.Clear();
     }
 
-    public void PutBackToDeck(GameObject card)
+    public void PutBackToDeckAnim(GameObject card)
     {
         float jumpPow = UnityEngine.Random.Range(300, -300);
         card.transform.DOJump(DeckParent.position, jumpPow, 1, 0.25f);
         card.transform.DORotate(Vector3.zero, 0.25f);
     }
 
-    public void UseCard()
+    public void cardScrollSelection()
     {
-        if (/*Input.GetMouseButtonDown(0) &&*/ isSelecting && (CurrentSelectedCard >= 0 && CurrentSelectedCard < handCard.Count))
-        {
-            PlayerManagerScript playerManager = PlayerManagerScript.Instance;
-            //discard Card
-            AbilityCard usedCard = handCard[CurrentSelectedCard].GetComponent<AbilityCard>();
-            usedCard.UseAbility(playerManager);
-            DiscardedCard.Add(usedCard.gameObject);
-            handCard.RemoveAt(CurrentSelectedCard);
-            discardCard(usedCard.gameObject);
-            UsedCard.Invoke(usedCard);
-            scrollIdleTimer = selectedTime;
-        }
-    }
-
-    private void cardScrollSelection()
-    {
-        if(handCard.Count > 0)
+        if (handpile.Count > 0)
         {
             Vector2 scrollDelta = Input.mouseScrollDelta;
             if (scrollDelta.y != 0)
@@ -144,13 +135,13 @@ public class HandManager : MonoBehaviour
                 if (isSelecting)
                 {
                     int totalSelected = CurrentSelectedCard + Mathf.RoundToInt(-scrollDelta.y);
-                    if (totalSelected > handCard.Count - 1)
+                    if (totalSelected > handpile.Count - 1)
                     {
-                        CurrentSelectedCard = totalSelected - handCard.Count/* - 1*/;
+                        CurrentSelectedCard = totalSelected - handpile.Count/* - 1*/;
                     }
                     else if (totalSelected < 0)
                     {
-                        CurrentSelectedCard = handCard.Count + totalSelected;
+                        CurrentSelectedCard = handpile.Count + totalSelected;
                     }
                     else
                     {
@@ -172,15 +163,15 @@ public class HandManager : MonoBehaviour
         }
     }
 
-    private void updateHandCardPos()
+    public void updateHandCardPos()
     {
-        if (handCard.Count == 0) return;
-        float cardSpacing = 1f / handCard.Count /*maxHandSize*/;
-        float firstCardPosition = 0.5f - (handCard.Count - 1) * cardSpacing / 2;
+        if (handpile.Count == 0) return;
+        float cardSpacing = 1f / handpile.Count /*maxHandSize*/;
+        float firstCardPosition = 0.5f - (handpile.Count - 1) * cardSpacing / 2;
         float selectedPush = 200f;
         Spline spline = splineContainer.Spline;
 
-        for (int i = 0; i < handCard.Count; i++)
+        for (int i = 0; i < handpile.Count; i++)
         {
             float p = firstCardPosition + i * cardSpacing;
             Vector3 splinePos = spline.EvaluatePosition(p) + offset;
@@ -188,22 +179,25 @@ public class HandManager : MonoBehaviour
             Vector3 up = spline.EvaluateUpVector(p);
             Quaternion rotation = Quaternion.LookRotation(up, Vector3.Cross(up, forward).normalized);
 
-            handCard[i].transform.SetSiblingIndex(i);
+            handpile[i].transform.SetSiblingIndex(i);
             if (isSelecting && i == CurrentSelectedCard)
             {
                 splinePos += Vector3.up * selectedPush;
                 rotation = quaternion.identity;
-                handCard[i].transform.SetAsLastSibling();
+                handpile[i].transform.SetAsLastSibling();
             }
 
-            handCard[i].transform.DOMove(splinePos, 0.25f);
-            handCard[i].transform.DOLocalRotateQuaternion(rotation, 0.25f);
+            handpile[i].transform.DOMove(splinePos, 0.25f);
+            handpile[i].transform.DOLocalRotateQuaternion(rotation, 0.25f);
 
         }
     }
 
     public void discardCard(GameObject card)
     {
+        handpile.Remove(card);
+        DiscardedPile.Add(card);
+
         float jumpPow = UnityEngine.Random.Range(200, -200);
         card.transform.DOJump(discardPoint.position, jumpPow, 1, 0.25f);
 
@@ -214,22 +208,14 @@ public class HandManager : MonoBehaviour
     [ContextMenu("Shuffle deck")]
     public void shuffleDeck()
     {
-        //int listCount = Deck.Count;
-        //for (int i = listCount; i > 0; i--)
-        //{
-        //    int rand = UnityEngine.Random.Range(0, listCount + 1);
-        //    var temp = Deck[rand];
-        //    Deck[rand] = Deck[i];
-        //    Deck[i] = temp;
-        //}
-        int deckCount = Deck.Count;
+        int deckCount = DeckPile.Count;
         while (deckCount > 1)
         {
             deckCount--;
             int rand = UnityEngine.Random.Range(0, deckCount + 1);
-            GameObject temp = Deck[rand];
-            Deck[rand] = Deck[deckCount];
-            Deck[deckCount] = temp;
+            GameObject temp = DeckPile[rand];
+            DeckPile[rand] = DeckPile[deckCount];
+            DeckPile[deckCount] = temp;
         }
     }
 }

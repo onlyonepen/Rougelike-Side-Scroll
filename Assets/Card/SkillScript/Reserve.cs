@@ -12,26 +12,14 @@ public class Reserve : AbilityCard
         StartCoroutine(Ability(playerManager));
     }
 
-    private void decidedCard(AbilityCard card)
-    {
-        isSelecting = true;
-        PlayerManagerScript player = PlayerManagerScript.Instance;
-
-        //add the card to the front;
-        player.HandManager.PutBackToDeck(card.gameObject);
-        
-        player.HandManager.UsedCard -= decidedCard;
-    }
-
     public IEnumerator Ability(PlayerManagerScript playerManager)
     {
         Debug.Log("Use" + this.ToString());
         yield return new WaitForSeconds(Anticipation);
-        playerManager.HandManager.UsedCard += decidedCard;
 
-        isSelecting = false;
-        Time.timeScale = 0;
+        HandStateManager handManager = playerManager.HandManager;
+        handManager.ChangeState(handManager.ReserveState);
 
-        yield return new WaitUntil(() => isSelecting);
+        yield return new WaitUntil(() => !isSelecting);
     }
 }

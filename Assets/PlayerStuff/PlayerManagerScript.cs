@@ -21,7 +21,7 @@ public class PlayerManagerScript : MonoBehaviour
     public PlayerState State { get; private set; }
     public PlayerMovementScript MovementScript;
     public PlayerAnimationScript AnimationScript;
-    public HandManager HandManager;
+    public HandStateManager HandManager;
 
     public InputActionAsset actionAsset;
 
@@ -32,7 +32,6 @@ public class PlayerManagerScript : MonoBehaviour
     public float CurrentHealth;
     public Slider HpSlider;
 
-    //Event stuff
 
     private PlayerState previousState;
     private bool stateLocked = false;
@@ -42,7 +41,6 @@ public class PlayerManagerScript : MonoBehaviour
 
     [HideInInspector] public int facingDir;
 
-    [Header("Ability")]
 
 
     public static PlayerManagerScript Instance { get; private set; }
@@ -60,7 +58,7 @@ public class PlayerManagerScript : MonoBehaviour
 
     private void OnEnable()
     {
-        actionAsset.FindAction("UseCard").started += useCard;
+        actionAsset.FindAction("UseCard").started += chooseCard;
         actionAsset.FindAction("DrawCard").started += drawCard;
     }
 
@@ -166,9 +164,9 @@ public class PlayerManagerScript : MonoBehaviour
     #endregion
 
     #region card
-    private void useCard(InputAction.CallbackContext obj)
+    private void chooseCard(InputAction.CallbackContext obj)
     {
-        HandManager.UseCard();
+        HandManager.ChooseCard();
     }
 
     #region DrawCard logic

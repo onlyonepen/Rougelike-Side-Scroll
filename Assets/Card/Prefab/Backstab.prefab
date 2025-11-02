@@ -51,7 +51,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stab
   Range: 2
-  Damage: 5
+  Damage: 40
   CritMult: 2
   StaggeringTime: 0.5
   pushUpForce: 0

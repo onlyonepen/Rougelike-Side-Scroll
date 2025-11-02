@@ -90,7 +90,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SharpShotter
   lineMat: {fileID: 2100000, guid: 0dbb654b3c57a60498876a2df2fa4d00, type: 2}
   range: 3
-  damage: 3
+  damage: 30
   critFac: 2
   staggeringTime: 0.2
   enemyLayer:

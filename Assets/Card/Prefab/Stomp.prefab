@@ -89,7 +89,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stomp
   range: 3
-  damage: 5
+  damage: 50
   staggeringTime: 1
   pushUpForce: 5
   enemyLayer:

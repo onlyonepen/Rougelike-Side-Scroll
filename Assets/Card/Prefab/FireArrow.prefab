@@ -89,5 +89,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   projectile: {fileID: 5070971849734371822, guid: 3a38028b7fa0db346887283a2ee67f25, type: 3}
-  damage: 3
+  damage: 30
+  staggeringTime: 0.2
   throwVec: {x: 20, y: 2}

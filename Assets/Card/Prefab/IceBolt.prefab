@@ -89,5 +89,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::IceBolt
   projectile: {fileID: 4810689069885425230, guid: 5bc99f9f72524a74c9365ef3a8c0ba8d, type: 3}
-  damage: 3
+  damage: 35
   freezeTime: 2

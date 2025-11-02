@@ -89,5 +89,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Range: 2
-  Damage: 6
+  Damage: 45
   StaggeringTime: 1
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0

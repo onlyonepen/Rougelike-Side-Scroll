@@ -9,7 +9,6 @@ public class BackStab : AbilityCard
     public float Damage = 5f;
     public float CritMult = 2f;
     public float StaggeringTime = 0.5f;
-    [SerializeField] private float pushUpForce;
     [SerializeField] private LayerMask enemyLayer;
     [SerializeField] private LayerMask groundLayer;
 
@@ -51,7 +50,6 @@ public class BackStab : AbilityCard
                     if (enemyClass.FacingDir() == playerManager.facingDir) totalDmg *= CritMult;
                 }
                 hit.gameObject.GetComponent<EnemyClass>().TakeDamage(totalDmg, StaggeringTime);
-                hit.attachedRigidbody.AddForce(Vector2.up * pushUpForce, ForceMode2D.Impulse);
             }
 
             hitEnemy = true;
