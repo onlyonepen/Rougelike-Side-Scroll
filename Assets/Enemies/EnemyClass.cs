@@ -42,6 +42,12 @@ public abstract class EnemyClass : MonoBehaviour, IDamagable
         }
     }
 
+    public void RemoveEffect(StatusClass effect)
+    {
+        effect.OnTimedOut();
+        StatusEffects.Remove(effect);
+    }
+
     public abstract event Action<string> OnChangeStateDebug;
 
     public LayerMask groundLayer;

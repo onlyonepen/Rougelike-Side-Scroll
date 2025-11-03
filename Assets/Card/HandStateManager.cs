@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
@@ -13,7 +14,7 @@ public class HandStateManager : MonoBehaviour
     [SerializeField] private Transform DeckParent;
     [SerializeField] private Transform discardPoint;
     [SerializeField] private Transform handTransform;
-    [SerializeField] private float3 offset;
+    public float3 offset;
 
     public bool isSelecting = false;
     public List<GameObject> DeckPile = new();
@@ -25,8 +26,9 @@ public class HandStateManager : MonoBehaviour
 
     public DefaultHandState DefaultHandState = new DefaultHandState();
     public ReserveState ReserveState = new ReserveState();
+    public RearrangingState rearrangingState = new RearrangingState();
 
-    float scrollIdleTimer = 0f;
+    [HideInInspector] public float scrollIdleTimer = 0f;
 
     private void Awake()
     {
@@ -46,7 +48,7 @@ public class HandStateManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        DefaultHandState.OnStateUpdate(this);
+        CurrentState.OnStateUpdate(this);
     }
 
     public void ChangeState(HandState state)
@@ -59,7 +61,10 @@ public class HandStateManager : MonoBehaviour
 
     public void ChooseCard()
     {
-        CurrentState.OnSelectCard(this, handpile[CurrentSelectedCard].GetComponent<AbilityCard>());
+        if (isSelecting)
+        {
+            CurrentState.OnSelectCard(this, handpile[CurrentSelectedCard].GetComponent<AbilityCard>());
+        }
     }
 
     public void ResetSelectionTimer()
@@ -155,9 +160,7 @@ public class HandStateManager : MonoBehaviour
             scrollIdleTimer += Time.deltaTime;
             if (scrollIdleTimer > selectedTime && isSelecting)
             {
-                //CurrentSelectedCard = handCard.Count; //deselect
                 isSelecting = false;
-                //updateHandCardPos();
             }
             updateHandCardPos();
         }

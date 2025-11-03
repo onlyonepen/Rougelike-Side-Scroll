@@ -45,6 +45,8 @@ public class RangeEnemyStateManager : EnemyClass
     {
         CurrentState.OnStateUpdate(this);
 
+        EffectOnUpdate();
+
         if (ReusableData.attackCooldownTimer > 0) ReusableData.attackCooldownTimer -= Time.deltaTime;
     }
 
@@ -65,6 +67,8 @@ public class RangeEnemyStateManager : EnemyClass
     public override void TakeDamage(float damage, float staggerTime)
     {
         CurrentHp -= damage;
+        Debug.Log("Take " + damage + " damage");
+
         if (staggerTime > 0)
         {
             ReusableData.staggerTime = staggerTime;

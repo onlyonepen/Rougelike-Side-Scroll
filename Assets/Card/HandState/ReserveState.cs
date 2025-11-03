@@ -8,7 +8,6 @@ public class ReserveState : HandState
         hand.DeckPile.Insert(0, card.gameObject);
         hand.PutBackToDeckAnim(card.gameObject);
     }
-
     public override void OnStateEnter(HandStateManager hand)
     {
         UIManager.Instance.DarkenOverlay.SetActive(true);

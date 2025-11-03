@@ -46,7 +46,9 @@ public class MeleeEnemyStateManager : EnemyClass
     {
         CurrentState.OnStateUpdate(this);
 
-        if(ReusableData.attackCooldownTimer > 0) ReusableData.attackCooldownTimer -= Time.deltaTime;
+        EffectOnUpdate();
+
+        if (ReusableData.attackCooldownTimer > 0) ReusableData.attackCooldownTimer -= Time.deltaTime;
     }
 
     private void FixedUpdate()
@@ -68,7 +70,9 @@ public class MeleeEnemyStateManager : EnemyClass
     public override void TakeDamage(float damage, float staggerTime)
     {
         CurrentHp -= damage;
-        if(staggerTime > 0)
+        Debug.Log("Take " + damage + " damage");
+
+        if (staggerTime > 0)
         {
             ReusableData.staggerTime = staggerTime;
             ChangeState(TakeDamageState);

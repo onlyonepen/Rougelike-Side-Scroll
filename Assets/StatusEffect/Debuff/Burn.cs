@@ -2,7 +2,9 @@ using UnityEngine;
 
 public class Burn : StatusClass
 {
-    private float burnDmg = 1f;
+    public float Duration = 5f;
+
+    private float burnDmg = 5f;
     private float burninterval = 1f;
 
     float lastBurnTime = 0f;
@@ -22,10 +24,16 @@ public class Burn : StatusClass
             enemy.TakeDamage(burnDmg, 0);
             lastBurnTime = Time.time;
         }
+
+        Duration -= Time.deltaTime;
+        if(Duration <= 0)
+        {
+            enemy.RemoveEffect(this);
+        }
     }
 
     public override void OnTimedOut()
     {
-
+        Debug.Log("Burn timed out");
     }
 }

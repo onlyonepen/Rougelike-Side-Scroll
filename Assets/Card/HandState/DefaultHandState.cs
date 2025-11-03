@@ -8,7 +8,6 @@ public class DefaultHandState : HandState
         hand.discardCard(card.gameObject);
         hand.ResetSelectionTimer();
     }
-
     public override void OnStateEnter(HandStateManager hand)
     {
 
@@ -16,6 +15,11 @@ public class DefaultHandState : HandState
     public override void OnStateUpdate(HandStateManager hand)
     {
         hand.cardScrollSelection();
+
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            hand.ChangeState(hand.rearrangingState);
+        }
     }
 
     public override void OnStateExit(HandStateManager hand)
