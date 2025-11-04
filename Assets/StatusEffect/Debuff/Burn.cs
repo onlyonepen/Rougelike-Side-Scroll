@@ -28,12 +28,12 @@ public class Burn : StatusClass
         Duration -= Time.deltaTime;
         if(Duration <= 0)
         {
-            enemy.RemoveEffect(this);
+            IsEffectActive = false;
         }
     }
 
     public override void OnTimedOut()
     {
-        Debug.Log("Burn timed out");
+        //Debug.Log("Burn timed out");
     }
 }

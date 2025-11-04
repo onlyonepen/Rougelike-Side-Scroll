@@ -65,7 +65,7 @@ public class PlayerManagerScript : MonoBehaviour
     private void Start()
     {
         HandManager.shuffleDeck();
-        HandManager.Drawcard(HandManager.maxHandSize);
+        HandManager.Drawcard(HandManager.MaxHandSize);
         CurrentHealth = MaxHealth;
     }
 
@@ -209,7 +209,7 @@ public class PlayerManagerScript : MonoBehaviour
 
         MovementScript.canMove = true;
         HandManager.ClearHand();
-        HandManager.Drawcard(HandManager.maxHandSize);
+        HandManager.Drawcard(HandManager.MaxHandSize);
 
         stateLocked = false;
         isDrawing = false;

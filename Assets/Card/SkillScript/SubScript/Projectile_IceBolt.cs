@@ -16,6 +16,7 @@ public class Projectile_IceBolt : MonoBehaviour
             if (collision.gameObject.TryGetComponent<EnemyClass>(out EnemyClass enemyClass))
             {
                 Freeze _freeze = new Freeze();
+                enemyClass.freezeInstance = _freeze;
                 _freeze.FreezeTime = freezeTime;
                 enemyClass.StatusEffects.Add(_freeze);
                 _freeze.OnApply(enemyClass);

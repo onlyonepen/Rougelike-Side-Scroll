@@ -10,7 +10,7 @@ public class DefaultHandState : HandState
     }
     public override void OnStateEnter(HandStateManager hand)
     {
-
+        hand.CurrentSplineContainer = hand.CurveSplineContainer;
     }
     public override void OnStateUpdate(HandStateManager hand)
     {

@@ -9,8 +9,9 @@ public class HandStateManager : MonoBehaviour
 {
     public int CurrentSelectedCard = 1;
     [Space(10)]
-    public int maxHandSize;
-    [SerializeField] private SplineContainer splineContainer;
+    public int MaxHandSize = 6;
+    public SplineContainer CurveSplineContainer;
+    public SplineContainer StraightSplineContainer;
     [SerializeField] private Transform DeckParent;
     [SerializeField] private Transform discardPoint;
     [SerializeField] private Transform handTransform;
@@ -22,6 +23,10 @@ public class HandStateManager : MonoBehaviour
     public List<GameObject> DiscardedPile = new();
     private float selectedTime = 3f;
 
+    [Header("Rearrange state stuff")]
+    public float CameraMoveSpeed;
+    public Vector2 maxFreeCamDist;
+
     public HandState CurrentState;
 
     public DefaultHandState DefaultHandState = new DefaultHandState();
@@ -29,6 +34,7 @@ public class HandStateManager : MonoBehaviour
     public RearrangingState rearrangingState = new RearrangingState();
 
     [HideInInspector] public float scrollIdleTimer = 0f;
+    [HideInInspector] public SplineContainer CurrentSplineContainer;
 
     private void Awake()
     {
@@ -37,6 +43,8 @@ public class HandStateManager : MonoBehaviour
             DeckPile.Add(DeckParent.GetChild(i).gameObject);
         }
         DOTween.SetTweensCapacity(1250, 50);
+
+        CurrentSplineContainer = CurveSplineContainer;
     }
 
     private void Start()
@@ -78,7 +86,6 @@ public class HandStateManager : MonoBehaviour
         {
             if (DeckPile.Count > 0)
             {
-                //int rand = UnityEngine.Random.Range(0, Deck.Count - 1);
                 GameObject card = DeckPile[0];
 
                 handpile.Add(card);
@@ -172,7 +179,7 @@ public class HandStateManager : MonoBehaviour
         float cardSpacing = 1f / handpile.Count /*maxHandSize*/;
         float firstCardPosition = 0.5f - (handpile.Count - 1) * cardSpacing / 2;
         float selectedPush = 200f;
-        Spline spline = splineContainer.Spline;
+        Spline spline = CurrentSplineContainer.Spline;
 
         for (int i = 0; i < handpile.Count; i++)
         {

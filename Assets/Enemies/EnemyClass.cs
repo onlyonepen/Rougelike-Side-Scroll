@@ -8,6 +8,7 @@ public abstract class EnemyClass : MonoBehaviour, IDamagable
     public float CurrentHp;
     [HideInInspector] public bool isOnFire = false;
     [HideInInspector] public bool isFreezing = false;
+    [HideInInspector] public Freeze freezeInstance;
 
     public List<StatusClass> StatusEffects = new List<StatusClass>();
 
@@ -36,16 +37,21 @@ public abstract class EnemyClass : MonoBehaviour, IDamagable
 
     public void EffectOnUpdate()
     {
+        List<StatusClass> toRemove = new List<StatusClass>();
         foreach (StatusClass status in StatusEffects)
         {
             status.OnUpdate();
+            if (!status.IsEffectActive)
+            {
+                status.OnTimedOut();
+                toRemove.Add(status);
+            }
         }
-    }
 
-    public void RemoveEffect(StatusClass effect)
-    {
-        effect.OnTimedOut();
-        StatusEffects.Remove(effect);
+        foreach(StatusClass status in toRemove)
+        {
+            StatusEffects.Remove(status);
+        }
     }
 
     public abstract event Action<string> OnChangeStateDebug;

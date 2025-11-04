@@ -25,5 +25,6 @@ public class MeleeEnemyFreezeState : MeleeEnemyStateClass
     public override void OnStateExit(MeleeEnemyStateManager meleeEnemy)
     {
         meleeEnemy.isFreezing = false;
+        meleeEnemy.StatusEffects.Remove(meleeEnemy.freezeInstance);
     }
 }

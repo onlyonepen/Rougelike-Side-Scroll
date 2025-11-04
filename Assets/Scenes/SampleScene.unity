@@ -1731,6 +1731,38 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 8118653443095668651, guid: 6cd7205417763174aaf0ed81021cf9af, type: 3}
   m_PrefabInstance: {fileID: 470583220}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &489588023
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 489588024}
+  m_Layer: 7
+  m_Name: CameraPos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &489588024
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 489588023}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 519420032}
+  m_Father: {fileID: 8476458964754153936}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &497728461
 GameObject:
   m_ObjectHideFlags: 0
@@ -2024,11 +2056,11 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.2, z: -10}
+  m_LocalPosition: {x: 0, y: 1.6, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8476458964754153936}
+  m_Father: {fileID: 489588024}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &556728413
 PrefabInstance:
@@ -5929,8 +5961,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CurrentSelectedCard: 0
-  maxHandSize: 6
-  splineContainer: {fileID: 1640594282}
+  MaxHandSize: 6
+  CurveSplineContainer: {fileID: 1640594282}
+  StraightSplineContainer: {fileID: 563913146}
   DeckParent: {fileID: 2088055082}
   discardPoint: {fileID: 159579554}
   handTransform: {fileID: 399008898}
@@ -5942,6 +5975,10 @@ MonoBehaviour:
   DeckPile: []
   handpile: []
   DiscardedPile: []
+  CameraMoveSpeed: 5
+  maxFreeCamDist: {x: 10, y: 5}
+  scrollIdleTimer: 0
+  CurrentSplineContainer: {fileID: 0}
 --- !u!1 &1735608377
 GameObject:
   m_ObjectHideFlags: 0
@@ -7432,6 +7469,51 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &2144895107
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2144895108}
+  - component: {fileID: 2144895109}
+  m_Layer: 0
+  m_Name: CameraManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2144895108
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2144895107}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2144895109
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2144895107}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64c5d78305dfd734a9c13d2dedd75cd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MainCameraPos: {fileID: 489588023}
 --- !u!50 &339735154230452754
 Rigidbody2D:
   serializedVersion: 5
@@ -8106,7 +8188,7 @@ Transform:
   m_Children:
   - {fileID: 8242506765330384759}
   - {fileID: 1835505308}
-  - {fileID: 519420032}
+  - {fileID: 489588024}
   m_Father: {fileID: 1308354165}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &9176521300082211886
@@ -8131,6 +8213,7 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 619394802}
+  - {fileID: 2144895108}
   - {fileID: 1308354165}
   - {fileID: 1383497073}
   - {fileID: 2092184724}
