@@ -8,12 +8,17 @@ public abstract class EnemyClass : MonoBehaviour, IDamagable
     public float CurrentHp;
     [HideInInspector] public bool isOnFire = false;
     [HideInInspector] public bool isFreezing = false;
+    [HideInInspector] public bool isMarkedForTomorrow = false;
+
+    [HideInInspector] public MarkForTomorrow mFT;
     [HideInInspector] public Freeze freezeInstance;
 
     public List<StatusClass> StatusEffects = new List<StatusClass>();
 
     public virtual void TakeDamage(float damage, float staggerTime)
     {
+        if(isMarkedForTomorrow) RemoveMarkForTomorrow();
+
         CurrentHp -= damage;
         Debug.Log("Take " + damage + " damage");
 
@@ -78,6 +83,14 @@ public abstract class EnemyClass : MonoBehaviour, IDamagable
     }
 
     public virtual void FreezeEnemy(float freezeTime) { }
+
+    public void RemoveMarkForTomorrow()
+    {
+        mFT.OnTimedOut();
+        StatusEffects.Remove(mFT);
+        isMarkedForTomorrow = false;
+        mFT = null;
+    }
 }
 
 //public abstract class EnemyStateManager : EnemyClass

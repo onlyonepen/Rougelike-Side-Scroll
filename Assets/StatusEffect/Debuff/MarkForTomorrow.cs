@@ -1,15 +1,13 @@
 using UnityEngine;
 
-public class Freeze : StatusClass
+public class MarkForTomorrow : StatusClass
 {
-    public float FreezeTime = 2;
-
     private EnemyClass enemy;
     public override void OnApply(EnemyClass enemyClass)
     {
         enemy = enemyClass;
-        enemy.isFreezing = true;
-        enemy.FreezeEnemy(FreezeTime);
+        enemy.isMarkedForTomorrow = true;
+        enemy.mFT = this;
     }
 
     public override void OnUpdate()
@@ -19,6 +17,6 @@ public class Freeze : StatusClass
 
     public override void OnTimedOut()
     {
-        enemy.isFreezing = false;
+
     }
 }

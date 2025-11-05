@@ -43,8 +43,6 @@ public class RangeEnemyAttackState : RangeEnemyStateClass
     {
         yield return new WaitForSeconds(anticipation);
 
-        Debug.Log("Shoot projectile");
-
         GameObject throwedProj = rangeEnemy.spawnProjectile(projectile);
 
         if (throwedProj.TryGetComponent<RangeEnemyProjectileScript>(out RangeEnemyProjectileScript enemyProj))

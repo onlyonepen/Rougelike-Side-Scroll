@@ -34,6 +34,6 @@ public class Burn : StatusClass
 
     public override void OnTimedOut()
     {
-        //Debug.Log("Burn timed out");
+        enemy.isOnFire = false;
     }
 }
