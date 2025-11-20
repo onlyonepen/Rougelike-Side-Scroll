@@ -13,7 +13,7 @@ public class DoubleTheTrouble : AbilityCard
     [SerializeField] private LayerMask groundLayer;
 
     private Vector3 castOrigin;
-    private Vector2 castSize = new Vector2(1, 0.5f);
+    private Vector2 castSize = new Vector2(1, 1f);
     private float castAngle = 0f;
     private bool isAttacking = false;
 
@@ -34,12 +34,13 @@ public class DoubleTheTrouble : AbilityCard
 
         castOrigin = attackOffset + playerPos;
 
-        castHit = Physics2D.OverlapBoxAll(castOrigin, castSize, castAngle, enemyLayer);
+        castHit = HitboxVisualizeUtils.Instance.OverlapBoxWithVisualize(castOrigin, castSize, castAngle, enemyLayer);
 
         bool hitEnemy = false;
 
         foreach (Collider2D hit in castHit)
         {
+            bool _isCrit = false;
             Vector2 direction = hit.transform.position - playerPos;
             bool isObstructed = Physics2D.Raycast(playerPos, direction, direction.magnitude, groundLayer);
             if (!isObstructed)
@@ -50,13 +51,13 @@ public class DoubleTheTrouble : AbilityCard
                     if (enemyClass.isMarkedForTomorrow)
                     {
                         totalDmg *= CritMult;
+                        _isCrit = true;
                     }
                 }
-                hit.gameObject.GetComponent<EnemyClass>().TakeDamage(totalDmg, StaggeringTime);
+                hit.gameObject.GetComponent<EnemyClass>().TakeDamage(totalDmg, StaggeringTime, _isCrit);
                 MarkForTomorrow _mFT = new MarkForTomorrow();
-                enemyClass.mFT = _mFT;
-                enemyClass.StatusEffects.Add(_mFT);
-                _mFT.OnApply(enemyClass);
+                enemyClass.mFTInstance = _mFT;
+                enemyClass.ApplyStatusEffect(_mFT);
             }
 
             hitEnemy = true;

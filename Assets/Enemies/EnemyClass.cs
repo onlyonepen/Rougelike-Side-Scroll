@@ -6,21 +6,31 @@ public abstract class EnemyClass : MonoBehaviour, IDamagable
 {
     public float MaxHp;
     public float CurrentHp;
+
+    public abstract event Action<string> OnChangeStateDebug;
+
+    public LayerMask groundLayer;
+    public LayerMask playerLayer;
+
+    public ReusableEnemyData ReusableData = new ReusableEnemyData();
+
+    //StatusEffectStuff
     [HideInInspector] public bool isOnFire = false;
     [HideInInspector] public bool isFreezing = false;
     [HideInInspector] public bool isMarkedForTomorrow = false;
 
-    [HideInInspector] public MarkForTomorrow mFT;
+    [HideInInspector] public Burn burnInstance;
+    [HideInInspector] public MarkForTomorrow mFTInstance;
     [HideInInspector] public Freeze freezeInstance;
 
     public List<StatusClass> StatusEffects = new List<StatusClass>();
 
-    public virtual void TakeDamage(float damage, float staggerTime)
+    public virtual void TakeDamage(float damage, float staggerTime, bool isCrit = false)
     {
         if(isMarkedForTomorrow) RemoveMarkForTomorrow();
 
         CurrentHp -= damage;
-        Debug.Log("Take " + damage + " damage");
+        LatestDamageDealt.Instance.UpdateDamage(damage, isCrit);
 
         if (CurrentHp <= 0)
         {
@@ -34,10 +44,23 @@ public abstract class EnemyClass : MonoBehaviour, IDamagable
         Destroy(gameObject);
     }
 
-
     public void ApplyStatusEffect(StatusClass status)
     {
-        StatusEffects.Add(status);
+        bool isNewEffect = true;
+        foreach (StatusClass item in StatusEffects)
+        {
+            if(item.GetType() == status.GetType())
+            {
+                item.OnStack();
+                isNewEffect = false;
+            }
+        }
+
+        if (isNewEffect)
+        {
+            StatusEffects.Add(status);
+            status.OnApply(this);
+        }
     }
 
     public void EffectOnUpdate()
@@ -59,12 +82,6 @@ public abstract class EnemyClass : MonoBehaviour, IDamagable
         }
     }
 
-    public abstract event Action<string> OnChangeStateDebug;
-
-    public LayerMask groundLayer;
-    public LayerMask playerLayer;
-
-    public ReusableEnemyData ReusableData = new ReusableEnemyData();
 
     public bool GroundCheck()
     {
@@ -86,31 +103,24 @@ public abstract class EnemyClass : MonoBehaviour, IDamagable
 
     public void RemoveMarkForTomorrow()
     {
-        mFT.OnTimedOut();
-        StatusEffects.Remove(mFT);
+        mFTInstance.OnTimedOut();
+        StatusEffects.Remove(mFTInstance);
         isMarkedForTomorrow = false;
-        mFT = null;
+        mFTInstance = null;
+    }
+
+    public void RemoveEffect(StatusClass effect)
+    {
+        foreach(StatusClass status in StatusEffects)
+        {
+            if (status.GetType() == effect.GetType())
+            {
+                status.OnTimedOut();
+                StatusEffects.Remove(status);
+            }
+        }
     }
 }
-
-//public abstract class EnemyStateManager : EnemyClass
-//{
-//    public abstract event Action<string> OnChangeStateDebug;
-
-//    public LayerMask groundLayer;
-//    public LayerMask playerLayer;
-
-//    public ReusableEnemyData ReusableData = new ReusableEnemyData();
-
-//    public bool GroundCheck()
-//    {
-//        Collider2D enemyCol = ReusableData._boxCollider;
-//        Vector2 BoxcastOrigin = new Vector2(enemyCol.bounds.center.x, enemyCol.bounds.min.y);
-//        Vector2 BoxcastSize = new Vector2(enemyCol.bounds.size.x * 0.95f, 0.1f);
-
-//        return Physics2D.BoxCast(BoxcastOrigin, BoxcastSize, 0, Vector2.zero, Mathf.Infinity, groundLayer);
-//    }
-//}
 
 public class ReusableEnemyData
 {

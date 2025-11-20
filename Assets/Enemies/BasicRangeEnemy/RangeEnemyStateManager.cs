@@ -64,10 +64,10 @@ public class RangeEnemyStateManager : EnemyClass
         CurrentStateString = CurrentState.ToString();
         OnChangeStateDebug.Invoke(CurrentStateString);
     }
-    public override void TakeDamage(float damage, float staggerTime)
+    public override void TakeDamage(float damage, float staggerTime, bool isCrit = false)
     {
         CurrentHp -= damage;
-        Debug.Log("Take " + damage + " damage");
+        LatestDamageDealt.Instance.UpdateDamage(damage, isCrit);
 
         if (staggerTime > 0)
         {

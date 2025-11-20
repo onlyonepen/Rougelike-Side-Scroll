@@ -36,12 +36,13 @@ public class SledgeHammer : AbilityCard
 
         castOrigin = attackOffset + playerPos;
 
-        castHit = Physics2D.OverlapBoxAll(castOrigin, castSize, castAngle, enemyLayer);
+        castHit = HitboxVisualizeUtils.Instance.OverlapBoxWithVisualize(castOrigin, castSize, castAngle, enemyLayer);
 
         bool hitEnemy = false;
 
         foreach (Collider2D hit in castHit)
         {
+            bool _isCrit = false;
             Vector2 direction = hit.transform.position - playerPos;
             bool isObstructed = Physics2D.Raycast(playerPos, direction, direction.magnitude, groundLayer);
             if (!isObstructed)
@@ -50,8 +51,9 @@ public class SledgeHammer : AbilityCard
                 if (hit.transform.TryGetComponent<EnemyClass>(out EnemyClass enemyClass))
                 {
                     if(enemyClass.isFreezing) totalDmg *= CritMult;
+                    _isCrit = true;
                 }
-                hit.gameObject.GetComponent<EnemyClass>().TakeDamage(totalDmg, StaggeringTime);
+                hit.gameObject.GetComponent<EnemyClass>().TakeDamage(totalDmg, StaggeringTime, _isCrit);
             }
 
             hitEnemy = true;

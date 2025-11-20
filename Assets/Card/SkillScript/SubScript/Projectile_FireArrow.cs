@@ -12,8 +12,8 @@ public class Projectile_FireArrow : MonoBehaviour
             if (collision.gameObject.TryGetComponent<EnemyClass>(out EnemyClass enemyClass))
             {
                 Burn _burn = new Burn();
-                enemyClass.StatusEffects.Add(_burn);
-                _burn.OnApply(enemyClass);
+                enemyClass.burnInstance = _burn;
+                enemyClass.ApplyStatusEffect(_burn);
             }
         }
 

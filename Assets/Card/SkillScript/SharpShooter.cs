@@ -30,6 +30,7 @@ public class SharpShotter : AbilityCard
         Collider2D[] nearbyEnemy = Physics2D.OverlapCircleAll(playerPos, range, enemyLayer);
         foreach (Collider2D enemy in nearbyEnemy)
         {
+            bool _isCrit = false;
             Vector2 direction = enemy.transform.position - playerPos;
             bool isObstructed = Physics2D.Raycast(playerPos, direction, direction.magnitude, groundLayer);
             if (!isObstructed)
@@ -39,8 +40,9 @@ public class SharpShotter : AbilityCard
                 if (!eSM.GroundCheck())
                 {
                     totalDmg = damage * critFac;
+                    _isCrit = true;
                 }
-                eSM.TakeDamage(totalDmg, staggeringTime);
+                eSM.TakeDamage(totalDmg, staggeringTime, _isCrit);
                 allLineObj.Add(spawnLineRenderer(playerPos, eSM.transform.position));
             }
         }

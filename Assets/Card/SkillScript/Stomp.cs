@@ -6,7 +6,7 @@ public class Stomp : AbilityCard
     public override float Anticipation { get { return 0.5f; } }
     public override float Recovery { get { return 1f; } }
 
-    [SerializeField] private float range = 3f;
+    [SerializeField] private float range = 2f;
     [SerializeField] private float damage = 5;
     [SerializeField] private float staggeringTime = 0.2f;
     [SerializeField] private float pushUpForce;
@@ -25,7 +25,7 @@ public class Stomp : AbilityCard
         Debug.Log("UseStomp");
 
         Vector3 playerPos = playerManager.MovementScript.transform.position;
-        Collider2D[] nearbyEnemy = Physics2D.OverlapCircleAll(playerPos, range, enemyLayer);
+        Collider2D[] nearbyEnemy = HitboxVisualizeUtils.Instance.OverlapCircleWithVisualize(playerPos, range, enemyLayer);
         foreach (Collider2D enemy in nearbyEnemy)
         {
             Vector2 direction = enemy.transform.position - playerPos;

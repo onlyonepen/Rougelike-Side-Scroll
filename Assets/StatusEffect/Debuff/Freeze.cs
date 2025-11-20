@@ -21,4 +21,9 @@ public class Freeze : StatusClass
     {
         enemy.isFreezing = false;
     }
+
+    public override void OnStack() 
+    {
+        
+    }
 }

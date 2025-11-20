@@ -7,7 +7,7 @@ public class MarkForTomorrow : StatusClass
     {
         enemy = enemyClass;
         enemy.isMarkedForTomorrow = true;
-        enemy.mFT = this;
+        enemy.mFTInstance = this;
     }
 
     public override void OnUpdate()
@@ -16,6 +16,11 @@ public class MarkForTomorrow : StatusClass
     }
 
     public override void OnTimedOut()
+    {
+
+    }
+
+    public override void OnStack()
     {
 
     }

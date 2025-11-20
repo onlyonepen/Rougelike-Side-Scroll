@@ -36,7 +36,7 @@ public class BasicAttack : AbilityCard
 
         castOrigin = attackOffset + playerPos;
 
-        castHit = Physics2D.OverlapBoxAll(castOrigin, castSize, castAngle, enemyLayer);
+        castHit = HitboxVisualizeUtils.Instance.OverlapBoxWithVisualize(castOrigin, castSize, castAngle, enemyLayer);
 
         bool hitEnemy = false;
 

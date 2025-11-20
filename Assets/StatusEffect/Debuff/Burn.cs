@@ -36,4 +36,9 @@ public class Burn : StatusClass
     {
         enemy.isOnFire = false;
     }
+
+    public override void OnStack()
+    {
+
+    }
 }

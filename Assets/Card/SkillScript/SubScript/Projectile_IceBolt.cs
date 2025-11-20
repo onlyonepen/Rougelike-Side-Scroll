@@ -18,8 +18,7 @@ public class Projectile_IceBolt : MonoBehaviour
                 Freeze _freeze = new Freeze();
                 enemyClass.freezeInstance = _freeze;
                 _freeze.FreezeTime = freezeTime;
-                enemyClass.StatusEffects.Add(_freeze);
-                _freeze.OnApply(enemyClass);
+                enemyClass.ApplyStatusEffect(_freeze);
             }
         }
 

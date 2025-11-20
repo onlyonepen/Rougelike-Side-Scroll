@@ -40,10 +40,12 @@ public class MeleeEnemyAttackState : MeleeEnemyStateClass
 
         Debug.Log("Melee attack");
         Bounds boxBound = meleeEnemy.ReusableData._boxCollider.bounds;
-        Vector3 attackPos = boxBound.center + (new Vector3(meleeEnemy.DistaneToAttack , 0) * meleeEnemy.FacingDir());
-        Vector2 attackSize = new Vector2(boxBound.extents.x, boxBound.size.y);
-        bool HitPlayer = Physics2D.OverlapBox(attackPos, attackSize, meleeEnemy.playerLayer);
-        if (HitPlayer)
+        float dTR = meleeEnemy.DistaneToAttack;
+        Vector3 attackPos = boxBound.center + (new Vector3(dTR/2 - boxBound.extents.x , 0) * meleeEnemy.FacingDir());
+        Vector2 attackSize = new Vector2(dTR + boxBound.extents.x ,1);
+        Collider2D[] hit = HitboxVisualizeUtils.Instance.OverlapBoxWithVisualize(attackPos, attackSize, 0, meleeEnemy.playerLayer);
+
+        if (hit.Length != 0)
         {
             PlayerManagerScript.Instance.TakeDamage(meleeEnemy.AttackDamage);
         }
