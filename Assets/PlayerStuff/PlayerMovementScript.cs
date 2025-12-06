@@ -218,7 +218,6 @@ public class PlayerMovementScript : MonoBehaviour
 
         if (coyoteJumpTimer > 0 && bufferJumpTimer > 0)
         {
-            playerManager.CancelDrawCard();
             if (canMove)
             {
                 performJump();
@@ -376,7 +375,6 @@ public class PlayerMovementScript : MonoBehaviour
                     if (isFacingRight) facingDir = 1;
                     else facingDir = -1;
 
-                    playerManager.CancelDrawCard();
                     if (canMove)
                     {
                         performJump();
@@ -392,9 +390,8 @@ public class PlayerMovementScript : MonoBehaviour
 
     private void dash()
     {
-        if (hasDash && Input.GetMouseButtonDown(1) && canDash)
+        if (hasDash && Input.GetKeyDown(KeyCode.LeftShift) && canDash)
         {
-            playerManager.CancelDrawCard();
             if (canMove)
             {
                 DashCoroutine = StartCoroutine(startDash());

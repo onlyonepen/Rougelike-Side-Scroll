@@ -21,7 +21,8 @@ public class PlayerManagerScript : MonoBehaviour
     public PlayerState State { get; private set; }
     public PlayerMovementScript MovementScript;
     public PlayerAnimationScript AnimationScript;
-    public HandStateManager HandManager;
+    //public HandStateManager HandManager;
+    public CardManager CardManager;
 
     public InputActionAsset actionAsset;
 
@@ -58,14 +59,13 @@ public class PlayerManagerScript : MonoBehaviour
 
     private void OnEnable()
     {
-        actionAsset.FindAction("UseCard").started += chooseCard;
-        actionAsset.FindAction("DrawCard").started += drawCard;
+        actionAsset.FindAction("UseLeftCard").started += useLeftCard;
+        actionAsset.FindAction("UseRightCard").started += useRightCard;
     }
 
     private void Start()
     {
-        HandManager.shuffleDeck();
-        HandManager.Drawcard(HandManager.MaxHandSize);
+        CardManager.SetUpCard();
         CurrentHealth = MaxHealth;
     }
 
@@ -164,57 +164,62 @@ public class PlayerManagerScript : MonoBehaviour
     #endregion
 
     #region card
-    private void chooseCard(InputAction.CallbackContext obj)
+    private void useLeftCard(InputAction.CallbackContext obj)
     {
-        HandManager.ChooseCard();
+        CardManager.UseCard(CardManager.handSide.left);
     }
 
-    #region DrawCard logic
-    private void drawCard(InputAction.CallbackContext obj)
+    private void useRightCard(InputAction.CallbackContext obj)
     {
-        if (State != PlayerState.DrawingCard && MovementScript.GroundCheck && !isDrawing)
-        {
-            MovementScript.canMove = true;
-            stateLocked = false;
-
-            drawCardCou = StartCoroutine(drawingCard());
-        }
+        CardManager.UseCard(CardManager.handSide.right);
     }
 
-    public void CancelDrawCard()
-    {
-        if (isDrawing)
-        {
-            StopCoroutine(drawCardCou);
-            MovementScript.canMove = true;
-            stateLocked = false;
-            isDrawing = false;
-        }
-    }
+    //#region DrawCard logic
+    //private void drawCard(InputAction.CallbackContext obj)
+    //{
+    //    if (State != PlayerState.DrawingCard && MovementScript.GroundCheck && !isDrawing)
+    //    {
+    //        MovementScript.canMove = true;
+    //        stateLocked = false;
 
-    IEnumerator drawingCard()
-    {
-        stateLocked = true;
-        isDrawing = true;
+    //        drawCardCou = StartCoroutine(drawingCard());
+    //    }
+    //}
 
-        State = PlayerState.DrawingCard;
-        stateChanged();
+    //public void CancelDrawCard()
+    //{
+    //    if (isDrawing)
+    //    {
+    //        StopCoroutine(drawCardCou);
+    //        MovementScript.canMove = true;
+    //        stateLocked = false;
+    //        isDrawing = false;
+    //    }
+    //}
 
-        if (MovementScript.isDashing)
-        {
-            yield return new WaitUntil(() => MovementScript.isDashing == false);
-        }
-        MovementScript.canMove = false;
-        yield return new WaitForSeconds(drawingCardDur);
+    //IEnumerator drawingCard()
+    //{
+    //    stateLocked = true;
+    //    isDrawing = true;
 
-        MovementScript.canMove = true;
-        HandManager.ClearHand();
-        HandManager.Drawcard(HandManager.MaxHandSize);
+    //    State = PlayerState.DrawingCard;
+    //    stateChanged();
 
-        stateLocked = false;
-        isDrawing = false;
-    }
-    #endregion
+    //    if (MovementScript.isDashing)
+    //    {
+    //        yield return new WaitUntil(() => MovementScript.isDashing == false);
+    //    }
+    //    MovementScript.canMove = false;
+    //    yield return new WaitForSeconds(drawingCardDur);
+
+    //    MovementScript.canMove = true;
+    //    HandManager.ClearHand();
+    //    HandManager.Drawcard(HandManager.MaxHandSize);
+
+    //    stateLocked = false;
+    //    isDrawing = false;
+    //}
+    //#endregion
     #endregion
 
 }

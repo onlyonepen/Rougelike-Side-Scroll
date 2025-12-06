@@ -7,6 +7,7 @@ public class ReserveState : HandState
         hand.handpile.RemoveAt(hand.CurrentSelectedCard);
         hand.DeckPile.Insert(0, card.gameObject);
         hand.PutBackToDeckAnim(card.gameObject);
+        hand.ChangeState(hand.DefaultHandState);
     }
     public override void OnStateEnter(HandStateManager hand)
     {

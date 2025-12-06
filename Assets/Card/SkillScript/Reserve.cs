@@ -17,8 +17,8 @@ public class Reserve : AbilityCard
         Debug.Log("Use" + this.ToString());
         yield return new WaitForSeconds(Anticipation);
 
-        HandStateManager handManager = playerManager.HandManager;
-        handManager.ChangeState(handManager.ReserveState);
+        //HandStateManager handManager = playerManager.HandManager;
+        //handManager.ChangeState(handManager.ReserveState);
 
         yield return new WaitUntil(() => !isSelecting);
     }

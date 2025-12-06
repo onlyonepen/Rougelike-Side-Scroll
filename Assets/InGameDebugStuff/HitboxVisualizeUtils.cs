@@ -36,10 +36,10 @@ public class HitboxVisualizeUtils : MonoBehaviour
     {
         GameObject box = getVisualizeBox();
         box.SetActive(true);
-        box.transform.localScale = size;
+        box.transform.localScale = size / 2;
         box.transform.localPosition = point;
         StartCoroutine(delayDisable(box));
-        return Physics2D.OverlapBoxAll(point, size, angle, layerMask);
+        return Physics2D.OverlapBoxAll(point, size / 2, angle, layerMask);
     }
 
     public Collider2D[] OverlapCircleWithVisualize(Vector2 point, float radius, int layerMask = Physics.DefaultRaycastLayers)

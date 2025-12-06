@@ -38,7 +38,6 @@ public class MeleeEnemyAttackState : MeleeEnemyStateClass
     {
         yield return new WaitForSeconds(anticipation);
 
-        Debug.Log("Melee attack");
         Bounds boxBound = meleeEnemy.ReusableData._boxCollider.bounds;
         float dTR = meleeEnemy.DistaneToAttack;
         Vector3 attackPos = boxBound.center + (new Vector3(dTR/2 - boxBound.extents.x , 0) * meleeEnemy.FacingDir());
