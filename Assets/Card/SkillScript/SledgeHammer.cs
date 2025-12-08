@@ -4,7 +4,7 @@ using System.Collections;
 public class SledgeHammer : AbilityCard
 {
     public override float Anticipation { get { return 0.5f; } }
-    public override float Recovery { get { return 1f; } }
+    public override float Recovery { get { return 0.2f; } }
     public float Range = 2f;
     public float Damage = 5f;
     public float CritMult = 2f;
@@ -15,21 +15,12 @@ public class SledgeHammer : AbilityCard
     private Vector3 castOrigin;
     private Vector2 castSize = new Vector2(1, 1);
     private float castAngle = 0f;
-    private Vector2 castDirection = Vector2.down;
-    private float castDistance = 0.1f;
-    private bool isAttacking = false;
 
-    public override void UseAbility(PlayerManagerScript playerManager)
-    {
-        StartCoroutine(Ability(playerManager));
-    }
-
-    public IEnumerator Ability(PlayerManagerScript playerManager)
+    public override IEnumerator Ability(PlayerManagerScript playerManager)
     {
         Debug.Log("UseSkill");
         yield return new WaitForSeconds(Anticipation);
 
-        isAttacking = true;
         Collider2D[] castHit;
         Vector3 playerPos = playerManager.MovementScript.transform.position;
         Vector3 attackOffset = Vector3.right * playerManager.facingDir * Range / 2;
@@ -67,7 +58,5 @@ public class SledgeHammer : AbilityCard
         }
 
         yield return new WaitForSeconds(Recovery);
-
-        isAttacking = false;
     }
 }

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class SharpShotter : AbilityCard
 {
     public override float Anticipation { get { return 0.5f; } }
-    public override float Recovery { get { return 1f; } }
+    public override float Recovery { get { return 0.2f; } }
 
     [SerializeField] private Material lineMat;
     [SerializeField] private float range = 3f;
@@ -15,12 +15,8 @@ public class SharpShotter : AbilityCard
     [SerializeField] private LayerMask enemyLayer;
     [SerializeField] private LayerMask groundLayer;
 
-    public override void UseAbility(PlayerManagerScript playerManager)
-    {
-        StartCoroutine(Ability(playerManager));
-    }
 
-    public IEnumerator Ability(PlayerManagerScript playerManager)
+    public override IEnumerator Ability(PlayerManagerScript playerManager)
     {
         yield return new WaitForSeconds(Anticipation);
 

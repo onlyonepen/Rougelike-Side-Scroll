@@ -2,13 +2,14 @@ using DG.Tweening;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using VInspector;
 
 public class CardManager : MonoBehaviour
 {
     [SerializeField] private Transform DeckParent;
 
     public float CardMoveSpeed = 0.25f;
+    public AbilityCard currentUsingCard;
+    public handSide currentCardSide;
 
     [Header("Card queue")]
     public Transform CardQueuePos;
@@ -51,13 +52,11 @@ public class CardManager : MonoBehaviour
         DOTween.SetTweensCapacity(1250, 50);
     }
 
-    [Button]
     public void UseCard(handSide side)
     {
-        AbilityCard usedCard = RightCard;
-        if (side == handSide.left) usedCard = LeftCard;
-        usedCard.UseAbility(playerManager);
-        RotateHand(side);
+        currentUsingCard = side == handSide.left ? LeftCard : RightCard;
+        currentCardSide = side;
+        currentUsingCard.UseAbility(playerManager);
 
         rearrangeCardPos();
     }
@@ -117,9 +116,9 @@ public class CardManager : MonoBehaviour
         #endregion
     }
 
-    private void RotateHand(handSide side)
+    public void RotateHand()
     {
-        if (side == handSide.left)
+        if (currentCardSide == handSide.left)
         {
             if (LeftCard != null)
             {
@@ -130,7 +129,7 @@ public class CardManager : MonoBehaviour
             if(CardQueue.Count > 0)
             {
                 //addCard
-                LeftCard = CardQueue.Dequeue().GetComponent<AbilityCard>();
+                LeftCard = CardQueue.Dequeue();
             }
         }
 
@@ -145,17 +144,19 @@ public class CardManager : MonoBehaviour
             if (CardQueue.Count > 0)
             {
                 //addCard
-                RightCard = CardQueue.Dequeue().GetComponent<AbilityCard>();
+                RightCard = CardQueue.Dequeue();
             }
         }
+
+        rearrangeCardPos();
     }
 
     public void SetUpCard()
     {
         ShuffleDeck();
 
-        RotateHand(handSide.left);
-        RotateHand(handSide.right);
+        LeftCard = CardQueue.Dequeue();
+        RightCard = CardQueue.Dequeue();
 
         rearrangeCardPos();
     }

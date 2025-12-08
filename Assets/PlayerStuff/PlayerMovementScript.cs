@@ -394,8 +394,10 @@ public class PlayerMovementScript : MonoBehaviour
         {
             if (canMove)
             {
-                DashCoroutine = StartCoroutine(startDash());
+
             }
+            playerManager.ChangeState(playerManager.DefaultState);
+            DashCoroutine = StartCoroutine(startDash());
         }
     }
 

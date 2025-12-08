@@ -1,27 +1,11 @@
-using System;
-using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class PlayerManagerScript : MonoBehaviour
 {
-    public enum PlayerState
-    {
-        Idle,
-        Run,
-        HuggingWalls,
-        AirAssend,
-        AirDescend,
-        Dash,
-        UsingCard,
-        DrawingCard
-    }
-
-    public PlayerState State { get; private set; }
     public PlayerMovementScript MovementScript;
     public PlayerAnimationScript AnimationScript;
-    //public HandStateManager HandManager;
     public CardManager CardManager;
 
     public InputActionAsset actionAsset;
@@ -33,16 +17,11 @@ public class PlayerManagerScript : MonoBehaviour
     public float CurrentHealth;
     public Slider HpSlider;
 
-
-    private PlayerState previousState;
-    private bool stateLocked = false;
-
-    private Coroutine drawCardCou;
-    private bool isDrawing;
-
     [HideInInspector] public int facingDir;
 
-
+    public PlayerStateClass CurrentState;
+    public PlayerStateClass DefaultState = new NormalState();
+    public PlayerStateClass AttackingState = new AttackingState();
 
     public static PlayerManagerScript Instance { get; private set; }
     private void Awake()
@@ -65,80 +44,38 @@ public class PlayerManagerScript : MonoBehaviour
 
     private void Start()
     {
+        CurrentState = DefaultState;
+        CurrentState.OnStateEnter(this);
+
         CardManager.SetUpCard();
         CurrentHealth = MaxHealth;
     }
 
     private void Update()
     {
-        StateCheck();
+        CurrentState.OnStateUpdate(this);
 
         if (MovementScript.isFacingRight) facingDir = 1;
         else facingDir = -1;
     }
 
-    private void StateCheck()
+    private void FixedUpdate()
     {
-        PlayerState newState = State;
-
-        #region state no override
-        if (!stateLocked)
-        {
-            float horizontalInput = Input.GetAxis("Horizontal");
-            bool isMovingHorizontally = Mathf.Abs(horizontalInput) > 0.01f;
-
-            bool isGrounded = MovementScript.GroundCheck;
-            bool isTouchingWall = MovementScript.WallCheck;
-            float verticalVelocity = MovementScript.rb.linearVelocityY;
-            bool isFalling = verticalVelocity < -0.01f;
-            bool isRising = verticalVelocity > 0.01f;
-            bool isInAir = !isGrounded;
-            bool isDashing = MovementScript.isDashing;
-
-            // Prioritized state checks
-
-            if (isDashing)
-            {
-                newState = PlayerState.Dash;
-            }
-            else if (isGrounded)
-            {
-                newState = isMovingHorizontally ? PlayerState.Run : PlayerState.Idle;
-            }
-            else if (isInAir && isTouchingWall && isMovingHorizontally && isFalling)
-            {
-                newState = PlayerState.HuggingWalls;
-            }
-            else if (isInAir && isRising)
-            {
-                newState = PlayerState.AirAssend;
-            }
-            else if (isInAir && isFalling)
-            {
-                newState = PlayerState.AirDescend;
-            }
-        }
-        #endregion
-
-        if (newState != State)
-        {
-            previousState = State;
-            State = newState;
-            stateChanged();
-        }
+        CurrentState.OnStatePhysicUpdate(this);
     }
 
-    private void stateChanged()
+    public void ChangeState(PlayerStateClass state)
     {
-        //Debug.Log($"State changed from {previousState} to {State}");
+        CurrentState.OnStateExit(this);
+        CurrentState = state;
+        CurrentState.OnStateEnter(this);
     }
 
     #region Health
 
     public void TakeDamage(float damage)
     {
-        CurrentHealth -= damage;
-        HealthUpdate();
+        CurrentState.OnTakeDamage(this, damage);
     }
 
     public void Heal(float amount)
@@ -164,62 +101,14 @@ public class PlayerManagerScript : MonoBehaviour
     #endregion
 
     #region card
-    private void useLeftCard(InputAction.CallbackContext obj)
+    public void useLeftCard(InputAction.CallbackContext obj)
     {
-        CardManager.UseCard(CardManager.handSide.left);
+        CurrentState.OnUseLeftCard(this);
     }
 
-    private void useRightCard(InputAction.CallbackContext obj)
+    public void useRightCard(InputAction.CallbackContext obj)
     {
-        CardManager.UseCard(CardManager.handSide.right);
+        CurrentState.OnUseRightCard(this);
     }
-
-    //#region DrawCard logic
-    //private void drawCard(InputAction.CallbackContext obj)
-    //{
-    //    if (State != PlayerState.DrawingCard && MovementScript.GroundCheck && !isDrawing)
-    //    {
-    //        MovementScript.canMove = true;
-    //        stateLocked = false;
-
-    //        drawCardCou = StartCoroutine(drawingCard());
-    //    }
-    //}
-
-    //public void CancelDrawCard()
-    //{
-    //    if (isDrawing)
-    //    {
-    //        StopCoroutine(drawCardCou);
-    //        MovementScript.canMove = true;
-    //        stateLocked = false;
-    //        isDrawing = false;
-    //    }
-    //}
-
-    //IEnumerator drawingCard()
-    //{
-    //    stateLocked = true;
-    //    isDrawing = true;
-
-    //    State = PlayerState.DrawingCard;
-    //    stateChanged();
-
-    //    if (MovementScript.isDashing)
-    //    {
-    //        yield return new WaitUntil(() => MovementScript.isDashing == false);
-    //    }
-    //    MovementScript.canMove = false;
-    //    yield return new WaitForSeconds(drawingCardDur);
-
-    //    MovementScript.canMove = true;
-    //    HandManager.ClearHand();
-    //    HandManager.Drawcard(HandManager.MaxHandSize);
-
-    //    stateLocked = false;
-    //    isDrawing = false;
-    //}
-    //#endregion
     #endregion
-
 }
