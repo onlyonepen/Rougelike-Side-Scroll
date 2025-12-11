@@ -1,20 +1,13 @@
 using UnityEngine;
-using System.Collections;
 
 public class IceBolt : AbilityCard
 {
-    public override float Anticipation { get { return 0.5f; } }
-    public override float Recovery { get { return 0.2f; } }
-
     [SerializeField] private GameObject projectile;
     [SerializeField] private float damage = 5;
     [SerializeField] private float freezeTime = 2f;
 
-
-    public override IEnumerator Ability(PlayerManagerScript playerManager)
+    public override void SkillAction()
     {
-        yield return new WaitForSeconds(Anticipation);
-
         GameObject throwedProj = Instantiate(projectile, playerManager.MovementScript.transform.position, Quaternion.identity);
 
         if (throwedProj.TryGetComponent<Projectile_IceBolt>(out Projectile_IceBolt projectile_Icebolt))
@@ -24,8 +17,5 @@ public class IceBolt : AbilityCard
             projectile_Icebolt.facingDir = playerManager.facingDir;
         }
         else Debug.Log("Projectile does not contain specific projectile logic");
-
-
-        yield return new WaitForSeconds(Recovery);
     }
 }

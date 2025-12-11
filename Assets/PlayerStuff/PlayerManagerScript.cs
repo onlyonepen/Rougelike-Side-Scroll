@@ -20,8 +20,8 @@ public class PlayerManagerScript : MonoBehaviour
     [HideInInspector] public int facingDir;
 
     public PlayerStateClass CurrentState;
-    public PlayerStateClass DefaultState = new NormalState();
-    public PlayerStateClass AttackingState = new AttackingState();
+    public NormalState DefaultState = new NormalState();
+    public AttackingState AttackingState = new AttackingState();
 
     public static PlayerManagerScript Instance { get; private set; }
     private void Awake()
@@ -109,6 +109,11 @@ public class PlayerManagerScript : MonoBehaviour
     public void useRightCard(InputAction.CallbackContext obj)
     {
         CurrentState.OnUseRightCard(this);
+    }
+
+    public void TryCancelSkill()
+    {
+        CardManager.CancelSkill();
     }
     #endregion
 }

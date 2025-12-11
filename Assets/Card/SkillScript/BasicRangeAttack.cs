@@ -3,19 +3,13 @@ using UnityEngine;
 
 public class BasicRangeAttack : AbilityCard
 {
-    public override float Anticipation { get { return 0.5f; } }
-    public override float Recovery { get { return 0.2f; } }
-
     [SerializeField] private GameObject projectile;
     [SerializeField] private float damage = 5;
     [SerializeField] private float staggeringTime = 0.2f;
     [SerializeField] private Vector2 throwVec = new Vector2(20, 5);
 
-
-    public override IEnumerator Ability(PlayerManagerScript playerManager)
+    public override void SkillAction()
     {
-        yield return new WaitForSeconds(Anticipation);
-
         GameObject throwedProj = Instantiate(projectile, playerManager.MovementScript.transform.position, Quaternion.identity);
 
         if (throwedProj.TryGetComponent<Projectile_Basic>(out Projectile_Basic projectile_Basic))
@@ -27,7 +21,5 @@ public class BasicRangeAttack : AbilityCard
 
         Vector2 _vec = new Vector2(throwVec.x * playerManager.facingDir, throwVec.y);
         throwedProj.GetComponent<Rigidbody2D>().AddForce(_vec, ForceMode2D.Impulse);
-
-        yield return new WaitForSeconds(Recovery);
     }
 }

@@ -30,6 +30,8 @@ public class CardManager : MonoBehaviour
     public Transform DiscardedPos;
 
     [HideInInspector] public List<AbilityCard> DiscardedList = new();
+    private bool IsSkillExcuted = false;
+
 
     PlayerManagerScript playerManager;
 
@@ -56,9 +58,21 @@ public class CardManager : MonoBehaviour
     {
         currentUsingCard = side == handSide.left ? LeftCard : RightCard;
         currentCardSide = side;
-        currentUsingCard.UseAbility(playerManager);
+        currentUsingCard.UseAbility(OnSkillExcuted,OnSkillEnded);
 
         rearrangeCardPos();
+
+        IsSkillExcuted = false;
+    }
+    private void OnSkillExcuted()
+    {
+        IsSkillExcuted = true;
+        RotateHand();
+    }
+    private void OnSkillEnded()
+    {
+        currentUsingCard = null;
+        playerManager.ChangeState(playerManager.DefaultState);
     }
     public void ShuffleDeck()
     {
@@ -159,5 +173,15 @@ public class CardManager : MonoBehaviour
         RightCard = CardQueue.Dequeue();
 
         rearrangeCardPos();
+    }
+
+    public void CancelSkill()
+    {
+        Debug.Log(IsSkillExcuted);
+        if (IsSkillExcuted)
+        {
+            return;
+        }
+        currentUsingCard.CancelSkill();
     }
 }

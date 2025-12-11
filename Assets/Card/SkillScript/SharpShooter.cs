@@ -4,9 +4,6 @@ using System.Collections.Generic;
 
 public class SharpShotter : AbilityCard
 {
-    public override float Anticipation { get { return 0.5f; } }
-    public override float Recovery { get { return 0.2f; } }
-
     [SerializeField] private Material lineMat;
     [SerializeField] private float range = 3f;
     [SerializeField] private float damage = 5;
@@ -14,13 +11,10 @@ public class SharpShotter : AbilityCard
     [SerializeField] private float staggeringTime = 0.2f;
     [SerializeField] private LayerMask enemyLayer;
     [SerializeField] private LayerMask groundLayer;
-
-
-    public override IEnumerator Ability(PlayerManagerScript playerManager)
+    private List<GameObject> allLineObj;
+    public override void SkillAction()
     {
-        yield return new WaitForSeconds(Anticipation);
-
-        List<GameObject> allLineObj = new List<GameObject>();
+        allLineObj = new List<GameObject>();
 
         Vector3 playerPos = playerManager.MovementScript.transform.position;
         Collider2D[] nearbyEnemy = Physics2D.OverlapCircleAll(playerPos, range, enemyLayer);
@@ -43,8 +37,11 @@ public class SharpShotter : AbilityCard
             }
         }
 
-        yield return new WaitForSeconds(0.1f);
+        Invoke(nameof(deleteLine), 0.1f);
+    }
 
+    private void deleteLine()
+    {
         foreach (GameObject obj in allLineObj)
         {
             if (obj != null)
@@ -53,8 +50,6 @@ public class SharpShotter : AbilityCard
             }
         }
         allLineObj.Clear();
-
-        yield return new WaitForSeconds(Recovery - 0.1f);
     }
 
     private GameObject spawnLineRenderer(Vector2 pointA, Vector2 pointB)

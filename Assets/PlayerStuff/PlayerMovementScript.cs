@@ -396,7 +396,7 @@ public class PlayerMovementScript : MonoBehaviour
             {
 
             }
-            playerManager.ChangeState(playerManager.DefaultState);
+            playerManager.TryCancelSkill();
             DashCoroutine = StartCoroutine(startDash());
         }
     }

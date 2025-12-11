@@ -3,9 +3,6 @@ using UnityEngine;
 
 public class Stomp : AbilityCard
 {
-    public override float Anticipation { get { return 0.5f; } }
-    public override float Recovery { get { return 0.2f; } }
-
     [SerializeField] private float range = 2f;
     [SerializeField] private float damage = 5;
     [SerializeField] private float staggeringTime = 0.2f;
@@ -13,12 +10,8 @@ public class Stomp : AbilityCard
     [SerializeField] private LayerMask enemyLayer;
     [SerializeField] private LayerMask groundLayer;
 
-    public override IEnumerator Ability(PlayerManagerScript playerManager)
+    public override void SkillAction()
     {
-        yield return new WaitForSeconds(Anticipation);
-
-        Debug.Log("UseStomp");
-
         Vector3 playerPos = playerManager.MovementScript.transform.position;
         Collider2D[] nearbyEnemy = HitboxVisualizeUtils.Instance.OverlapCircleWithVisualize(playerPos, range, enemyLayer);
         foreach (Collider2D enemy in nearbyEnemy)
@@ -31,7 +24,5 @@ public class Stomp : AbilityCard
                 enemy.attachedRigidbody.AddForce(Vector2.up * pushUpForce, ForceMode2D.Impulse);
             }
         }
-
-        yield return new WaitForSeconds(Recovery);
     }
 }

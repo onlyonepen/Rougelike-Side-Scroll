@@ -3,8 +3,6 @@ using UnityEngine;
 
 public class DoubleTheTrouble : AbilityCard
 {
-    public override float Anticipation { get { return 0.5f; } }
-    public override float Recovery { get { return 0.2f; } }
     public float Range = 2f;
     public float Damage = 5f;
     public float CritMult = 2f;
@@ -16,12 +14,8 @@ public class DoubleTheTrouble : AbilityCard
     private Vector2 castSize = new Vector2(1, 1f);
     private float castAngle = 0f;
 
-
-    public override IEnumerator Ability(PlayerManagerScript playerManager)
+    public override void SkillAction()
     {
-        Debug.Log("UseSkill");
-        yield return new WaitForSeconds(Anticipation);
-
         Collider2D[] castHit;
         Vector3 playerPos = playerManager.MovementScript.transform.position;
         Vector3 attackOffset = Vector3.right * playerManager.facingDir * Range / 2;
@@ -61,7 +55,5 @@ public class DoubleTheTrouble : AbilityCard
         {
 
         }
-
-        yield return new WaitForSeconds(Recovery);
     }
 }
